@@ -1,0 +1,13 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Items List";
+}
+
+<div id="root" />
+<script>
+    var __INITIAL_DATA__ = @Html.Raw(ViewBag.InitialData);
+</script>
+<script src="~/src/index.js"></script>
+<link rel="stylesheet" href="~/src/styles/output.css">

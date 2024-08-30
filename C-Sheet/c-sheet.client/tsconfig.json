@@ -21,6 +21,6 @@
     "outDir": "./build", 
     "sourceMap": true 
   },
-  "include": [ "src/**/*" ], 
+  "include": [ "src/**/*", "src/libs/interfaces/.ts" ], 
   "exclude": [ "node_modules", "build" ] 
 }

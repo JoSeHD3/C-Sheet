@@ -6,7 +6,7 @@ namespace C_Sheet.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CharacterController
+    public class CharacterController : ControllerBase
     {
         private readonly ICharacterService _characterService;
 

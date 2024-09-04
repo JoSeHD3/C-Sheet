@@ -20,5 +20,17 @@ namespace C_Sheet.Server.Controllers
         {
             return _characterService.GetCharacters();
         }
+        [HttpPost]
+        public IActionResult CreateCharacter([FromBody] Character newCharacter)
+        {
+            if (newCharacter == null)
+            {
+                return BadRequest();
+            }
+
+            _characterService.Add(newCharacter);
+
+            return Ok(newCharacter);
+        }
     }
 }

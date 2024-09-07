@@ -16,21 +16,35 @@ namespace C_Sheet.Server.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Character> Get()
+        public ActionResult<IEnumerable<Character>> Get()
         {
-            return _characterService.GetCharacters();
+            try
+            {
+                var characters = _characterService.GetCharacters();
+                return Ok(characters);
+            }
+            catch (ApplicationException ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
         [HttpPost]
         public IActionResult CreateCharacter([FromBody] Character newCharacter)
         {
-            if (newCharacter == null)
+            try
             {
-                return BadRequest();
+                if (newCharacter == null)
+                {
+                    return BadRequest(new { message = "Character data is required." });
+                }
+
+                _characterService.Add(newCharacter);
+                return Ok(newCharacter);
             }
-
-            _characterService.Add(newCharacter);
-
-            return Ok(newCharacter);
+            catch (ApplicationException ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
     }
 }

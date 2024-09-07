@@ -1,31 +1,46 @@
 ﻿using C_Sheet.Server.Interfaces;
 using C_Sheet.Server.Models;
+using MongoDB.Driver;
 
 namespace C_Sheet.Server.Services
 {
     public class CharacterService : ICharacterService
     {
-        private readonly List<Character> _characters;
+        private readonly IMongoCollection<Character> _characters;
 
-        public CharacterService()
+        public CharacterService(IMongoCollection<Character> characters)
         {
-            _characters = new List<Character>
-            {
-                new Character { Id = 1, Name = "Aragorn", Class = "Ranger", Level = 5 },
-                new Character { Id = 2, Name = "Legolas", Class = "Archer", Level = 4 },
-                new Character { Id = 3, Name = "Gandalf", Class = "Wizard", Level = 10 }
-            };
+            _characters = characters;
         }
 
         public IEnumerable<Character> GetCharacters()
         {
-            return _characters;
+            try
+            {
+                return _characters.AsQueryable().ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("An error occurred while retrieving characters.", ex);
+            }
         }
 
-        public void Add(Character character) 
+        public void Add(Character newCharacter) 
         {
-            character.Id = _characters.Max(c => c.Id) + 1; 
-            _characters.Add(character);
+            try
+            {
+                Character? existingCharacter = _characters.AsQueryable().FirstOrDefault(c => c.Name == newCharacter.Name);
+                if (existingCharacter != null)
+                {
+                    throw new ApplicationException($"A character with the name '{newCharacter.Name}' already exists.");
+                }
+
+                _characters.InsertOne(newCharacter);
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("An error occurred while adding a new character.", ex);
+            }
         }
     }
 }

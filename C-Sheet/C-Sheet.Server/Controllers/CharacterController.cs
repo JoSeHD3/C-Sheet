@@ -16,35 +16,21 @@ namespace C_Sheet.Server.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Character>> Get()
+        public async Task<ActionResult<IEnumerable<Character>>> Get()
         {
-            try
-            {
-                var characters = _characterService.GetCharacters();
-                return Ok(characters);
-            }
-            catch (ApplicationException ex)
-            {
-                return StatusCode(500, new { message = ex.Message });
-            }
+            var characters = await _characterService.GetCharactersAsync();
+            return Ok(characters);
         }
         [HttpPost]
-        public IActionResult CreateCharacter([FromBody] Character newCharacter)
+        public async Task<IActionResult> CreateCharacter([FromBody] Character newCharacter)
         {
-            try
+            if (newCharacter == null)
             {
-                if (newCharacter == null)
-                {
-                    return BadRequest(new { message = "Character data is required." });
-                }
+                return BadRequest("Character is null.");
+            }
 
-                _characterService.Add(newCharacter);
-                return Ok(newCharacter);
-            }
-            catch (ApplicationException ex)
-            {
-                return StatusCode(500, new { message = ex.Message });
-            }
+            await _characterService.AddCharacterAsync(newCharacter);
+            return Ok(newCharacter);
         }
     }
 }

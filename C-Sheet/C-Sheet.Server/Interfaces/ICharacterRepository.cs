@@ -2,7 +2,7 @@
 
 namespace C_Sheet.Server.Interfaces
 {
-    public interface ICharacterService
+    public interface ICharacterRepository
     {
         Task<IEnumerable<Character>> GetCharactersAsync();
         Task AddCharacterAsync(Character character);

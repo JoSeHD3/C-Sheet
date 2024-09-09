@@ -1,5 +1,7 @@
+using C_Sheet.Server.Database;
 using C_Sheet.Server.Interfaces;
 using C_Sheet.Server.Models;
+using C_Sheet.Server.Repositories;
 using C_Sheet.Server.Services;
 using MongoDB.Driver;
 
@@ -7,15 +9,18 @@ var builder = WebApplication.CreateBuilder(args);
 DotNetEnv.Env.Load();
 // Add services to the container.
 var connectionString = Environment.GetEnvironmentVariable("MONGODB_CONNECTION_STRING");
-var mongoClient = new MongoClient(connectionString);
-var database = mongoClient.GetDatabase("C_SheetDB");
+
+builder.Services.AddSingleton<DbContext>(sp =>
+{
+    return new DbContext(connectionString, "C_SheetDB");
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton(database.GetCollection<Character>("characters"));
+builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
 builder.Services.AddScoped<ICharacterService, CharacterService>();
 
 builder.Services.AddCors(options =>
